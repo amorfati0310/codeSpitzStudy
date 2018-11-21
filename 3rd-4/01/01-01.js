@@ -56,25 +56,6 @@ const Data = class {
   }
 };
 
-const Info = class {
-  constructor(data) {
-    const { title, header, items } = data;
-    if (typeof title !== "string" || !title) throw "invalid title";
-    if (typeof !Array.isArray(header) || !header.length) throw "invalid title";
-    if (typeof !Array.isArray(items) || !items.length) throw "invalid items";
-    this._private = { title, header, tiems };
-  }
-  get title() {
-    return this._private.title;
-  }
-  get header() {
-    return this._private.header;
-  }
-  get items() {
-    return this._private.items;
-  }
-};
-
 const JsonData = class extends Data {
   constructor(data) {
     super();
