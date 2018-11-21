@@ -8,42 +8,34 @@ const TableUrl = `http://localhost:3000/table`;
 // 어떻게 연결이 되어야 할까
 // 1.
 
-const Data = (_ => {
-  const Private = Symbol();
-  return class {
-    constructor(params) {}
-    async getData() {
-      throw "getData must override";
-    }
-  };
-})();
-
-const JsonData = _ => {
-  const Private = Symbol();
-  return class extends Data {
-    constructor(data) {
-      super();
-      this._data = data;
-    }
-    async getData() {
-      if (typeof this._data === "string") {
-        const response = await fetch(this._data);
-        return await response.json();
-      } else return this._data;
-    }
-  };
+const Data = class {
+  async getData() {
+    throw "getData must override";
+  }
 };
+
+const JsonData = class extends Data {
+  constructor(data) {
+    super();
+    this._data = data;
+  }
+  async getData() {
+    if (typeof this._data === "string") {
+      const response = await fetch(this._data);
+      return await response.json();
+    } else return this._data;
+  }
+};
+
 const data = new JsonData(TableUrl);
-console.log("data", data);
 
-// const table = new TableRenderer("#data");
-// table.render();
-
-// const Table = (_ => {
-//   const Private = Symbol();
-//   return class {
-//     constructor(selector) {}
-//     async load(url) {}
-//     render() {}
-//   };
-// })();
+const renderer = new Renderer();
+renderer.render(data);
+const Renderer = class {
+  constructor() {}
+  async render(data) {
+    if (!(data instanceof Data)) throw "invalid data type";
+    const json = await data.getData();
+    console.log(json);
+  }
+};

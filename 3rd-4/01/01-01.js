@@ -102,7 +102,9 @@ const Renderer = class {
 };
 
 const TableRenderer = class extends Renderer {
-  constructor(parent) {}
+  constructor(parent) {
+    validateSelector();
+  }
   _render() {}
 };
 
