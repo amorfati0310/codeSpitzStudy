@@ -1,13 +1,5 @@
 const TableUrl = `http://localhost:3000/table`;
 
-//
-// 데이터를 공급하는 애
-// 렌더하는애
-// table그리는 애
-
-// 어떻게 연결이 되어야 할까
-// 1.
-
 const Info = class {
   constructor(data) {
     const { title, header, items } = data;
@@ -71,20 +63,31 @@ const TableRenderer = class extends Renderer {
     parent.innerHTML = "";
     console.dir(info);
     const { title, header, items } = info;
-    const [table, caption, thead] = "table,caption,thead".split(",").map(v => document.createElement(v));
+    const [table, caption, thead, tbody] = "table,caption,thead,tbody".split(",").map(v => document.createElement(v));
     caption.innerHTML = title;
-    console.log(header);
-    console.log(items);
-    // [
-    //   caption,
-    //   header.reduce(
-    //   (_, v)=>(thead.appendChild(document.createElement("th")).innerHTML = v, thead)),
-    //   ...items.map(item=> item.reduce(
-    //     (tr,v)=>(tr.appendChild(document.createElement('td')).innerHTML=v,tr),
-    //     document.createElement("tr")
-    // ))
-    // ].forEach(el => table.appendChild(el));
-    // parent.appendChild(table);
+  const thr = document.createElement('tr')
+  thead.appendChild(thr);
+  [
+    caption,
+    header.reduce((ac,c)=>{
+    const th = document.createElement('th')
+    th.innerHTML = c;
+    thr.appendChild(th)
+      return thr;
+    }, thr),
+    items.reduce((tbody, tbodyRowData)=>{
+      const tbr = document.createElement('tr')
+      const tbodyRow = tbodyRowData.reduce((ac,c)=>{
+      const td = document.createElement('td')
+      td.innerHTML = c;
+      tbr.appendChild(td)
+      return tbr
+    }, tbr)
+    tbody.appendChild(tbodyRow)
+    return tbody
+  }, tbody)
+  ].forEach(el=>table.appendChild(el))
+    parent.appendChild(table);
   }
 };
 
@@ -92,3 +95,7 @@ const data = new JsonData(TableUrl);
 
 const tableRenderer = new TableRenderer("#table");
 tableRenderer.render(data);
+
+//과제 1
+//지금까지 전개한 객체협력모델에서는 여전히 문제가 남아있다.
+// Info는 Data와 Renderer 사이에 교환을 위한 프로토콜인데 Renderer의 자식인 TableRenderer도 Info에 의존적인 상태다. 이를 개선하라
